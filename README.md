@@ -1,311 +1,58 @@
-# Small API - Diary Service
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-A RESTful diary API built with Laravel 13, Laravel Sanctum, and SQLite. It supports account registration and token authentication, plus private diary entries that are searchable, sortable, and filterable.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-## Features
+## About Laravel
 
-- User registration, login, logout, and password reset
-- Bearer-token authentication with Laravel Sanctum
-- Create, list, view, update, and delete diary entries
-- One diary entry per user per date
-- Search by title, content, mood, weather, or emoji text
-- Filter by favourite status and date range
-- Sort by entry date, title, mood, or weather
-- Pagination with eight entries per page
-- Email verification and signed verification routes
-- User-owned data enforcement through policies
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-## Requirements
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-- PHP 8.3 or newer
-- Composer
-- Node.js and npm
-- SQLite
-- XAMPP or another local PHP server
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Installation
+## Learning Laravel
 
-From the project directory:
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm install
-npm run build
-```
+In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-On Windows PowerShell, create `.env` with:
+You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
 
-```powershell
-Copy-Item .env.example .env
-```
+## Agentic Development
 
-The project uses SQLite by default. Make sure `.env` contains:
-
-```env
-DB_CONNECTION=sqlite
-```
-
-Also ensure `database/database.sqlite` exists:
-
-```powershell
-New-Item -ItemType File database/database.sqlite -Force
-php artisan migrate
-```
-
-## Running the API
-
-Start the Laravel development server:
+Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
 
 ```bash
-php artisan serve
+composer require laravel/boost --dev
+
+php artisan boost:install
 ```
 
-The API base URL is:
+Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
-```text
-http://127.0.0.1:8000/api/v1
-```
+## Contributing
 
-You can instead run the application under XAMPP from `C:\xampp\htdocs\Small Api\play-ground\public`.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Authentication
+## Code of Conduct
 
-Protected endpoints require a Sanctum bearer token:
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-```http
-Authorization: Bearer <token>
-Accept: application/json
-```
+## Security Vulnerabilities
 
-### Register
-
-```http
-POST /api/v1/register
-Content-Type: application/json
-```
-
-```json
-{
-  "name": "Ada Lovelace",
-  "email": "ada@example.com",
-  "password": "Strong-password1!"
-}
-```
-
-Registration returns HTTP `204 No Content`.
-
-### Login
-
-```http
-POST /api/v1/login
-Content-Type: application/json
-```
-
-```json
-{
-  "email": "ada@example.com",
-  "password": "Strong-password1!"
-}
-```
-
-Response:
-
-```json
-{
-  "user": {
-    "name": "Ada Lovelace",
-    "email": "ada@example.com"
-  },
-  "token": "1|generated-sanctum-token"
-}
-```
-
-### Logout
-
-```http
-POST /api/v1/logout
-Authorization: Bearer <token>
-```
-
-Logout deletes the current access token and returns HTTP `204 No Content`.
-
-### Get the authenticated user
-
-```http
-GET /api/v1/user
-Authorization: Bearer <token>
-```
-
-## Diary Endpoints
-
-All diary endpoints require authentication.
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/diaries` | List diary entries |
-| `POST` | `/api/v1/diaries` | Create a diary entry |
-| `GET` | `/api/v1/diaries/{diary}` | View a diary entry |
-| `PUT` or `PATCH` | `/api/v1/diaries/{diary}` | Update a diary entry |
-| `DELETE` | `/api/v1/diaries/{diary}` | Delete a diary entry |
-
-### List diaries
-
-```http
-GET /api/v1/diaries
-Authorization: Bearer <token>
-Accept: application/json
-```
-
-Optional query parameters:
-
-| Parameter | Type | Description |
-|---|---|---|
-| `search` | string | Search title, content, mood, and weather |
-| `favourite` | boolean | Filter favourite entries |
-| `start_date` | `Y-m-d` | Include entries from this date |
-| `end_date` | `Y-m-d` | Include entries through this date |
-| `sort_by` | string | `entry_date`, `title`, `mood`, or `weather` |
-| `sort_dir` | string | `asc` or `desc` |
-| `page` | integer | Laravel paginator page number |
-
-Example:
-
-```text
-GET /api/v1/diaries?search=happy&favourite=true&start_date=2026-01-01&sort_by=entry_date&sort_dir=desc&page=1
-```
-
-### Create a diary
-
-```http
-POST /api/v1/diaries
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-```json
-{
-  "title": "A good day",
-  "content": "I completed the first milestone and learned something new.",
-  "entry_date": "2026-05-03",
-  "mood": "happy",
-  "weather": "sunny",
-  "is_favourite": true
-}
-```
-
-Validation rules:
-
-- `title`: optional, string, maximum 255 characters
-- `content`: required when creating, string, 5-5000 characters
-- `entry_date`: required, `Y-m-d`, cannot be in the future, unique per user
-- `mood`: optional, string, maximum 50 characters
-- `weather`: optional, string, maximum 50 characters
-- `is_favourite`: optional boolean
-
-A successful create returns HTTP `201 Created`.
-
-### Update a diary
-
-```http
-PATCH /api/v1/diaries/1
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-```json
-{
-  "title": "An excellent day",
-  "mood": "excited",
-  "is_favourite": false
-}
-```
-
-All update fields are optional. A successful update returns HTTP `201 Created`.
-
-### Delete a diary
-
-```http
-DELETE /api/v1/diaries/1
-Authorization: Bearer <token>
-```
-
-Returns HTTP `204 No Content`.
-
-## Example Response
-
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "user_id": 1,
-      "title": "A good day",
-      "content": "I completed the first milestone and learned something new.",
-      "entry_date": "2026-05-03",
-      "mood": "happy",
-      "weather": "sunny",
-      "boolean": true
-    }
-  ],
-  "links": {},
-  "meta": {}
-}
-```
-
-## Password and Email Routes
-
-The API also exposes these authentication routes:
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/v1/forgot-password` | Send a password reset link |
-| `POST` | `/api/v1/reset-password` | Reset a password |
-| `GET` | `/api/v1/verify-email/{id}/{hash}` | Verify an email address |
-| `POST` | `/api/v1/email/verification-notification` | Resend a verification notification |
-
-The email verification and verification notification routes require authentication.
-
-## Testing
-
-Run the Pest test suite:
-
-```bash
-php artisan test
-```
-
-Reset the local database and run migrations:
-
-```bash
-php artisan migrate:fresh
-```
-
-## Project Structure
-
-```text
-app/
-  Http/
-    Controllers/
-      API/V1/DiaryController.php
-      Auth/
-    Requests/
-    Resources/
-  Models/
-    Diary.php
-    User.php
-  Policies/
-database/
-  migrations/
-  seeders/
-routes/
-  api.php
-  auth.php
-tests/
-  Feature/
-```
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
-This project is available under the MIT license, following the Laravel application template.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
