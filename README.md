@@ -1,4 +1,4 @@
-# Small API - Diary Service
+# Diary Service
 
 A RESTful diary API built with Laravel 13, Laravel Sanctum, and SQLite. It supports account registration and token authentication, plus private diary entries that are searchable, sortable, and filterable.
 
